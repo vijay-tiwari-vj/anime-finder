@@ -8,8 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles({
   root: {
-    flexGrow: 1,
-    marginBottom: '6rem'
+    flexGrow: 1
   },
   title: {
     flexGrow: 1
@@ -21,8 +20,8 @@ export const Navbar = () => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="fixed">
-        <Container maxWidth="lg">
+      <AppBar position="static">
+        <Container maxWidth="md">
           <Toolbar>
             <Typography className={classes.title} variant="h6" noWrap>
               Fanime
