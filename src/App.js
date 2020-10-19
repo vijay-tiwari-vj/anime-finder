@@ -1,13 +1,18 @@
 import React from 'react';
-import TopAnime from './components/TopAnime';
-
 import Container from '@material-ui/core/Container';
 
+import Navbar from './components/Navbar';
+import TopAnime from './components/TopAnime';
+
 export const App = () => {
+
   return (
-    <Container maxWidth="lg" className="App">
-      <TopAnime />
-    </Container>
+    <>
+      <Navbar />
+      <Container maxWidth="lg">
+        <TopAnime />
+      </Container>
+    </>
   );
 }
 

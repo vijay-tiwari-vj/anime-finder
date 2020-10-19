@@ -47,24 +47,26 @@ export const TopAnime = () => {
   const top = topAnime.map(anime => {
     return (
       <Card className={classes.card} key={anime.mal_id}>
-        <CardActionArea>
-          <CardMedia
-            className={classes.media}
-            image={anime.image_url}
-            title={anime.title}
-          />
+        <a href={anime.url} target="_blank" rel="noopener noreferrer">
+          <CardActionArea>
+            <CardMedia
+              className={classes.media}
+              image={anime.image_url}
+              title={anime.title}
+            />
 
-          <CardContent className={classes.animeInfo}>
-            <Typography gutterBottom variant="body1" component="p">
-              {anime.title}
-            </Typography>
+            <CardContent className={classes.animeInfo}>
+              <Typography gutterBottom variant="body1" component="p">
+                {anime.title}
+              </Typography>
 
-            <Typography variant="body2" component="p">
-              {anime.score}
-            </Typography>
-          </CardContent>
+              <Typography variant="body2" component="p">
+                {anime.score}
+              </Typography>
+            </CardContent>
 
-        </CardActionArea>
+          </CardActionArea>
+        </a>
       </Card>
     )
   });
