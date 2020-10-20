@@ -7,11 +7,11 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import StarIcon from '@material-ui/icons/Star';
 import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles({
-  characterContainer: {
+  mangaContainer: {
     display: 'flex',
     flexWrap: 'wrap',
     gap: '10px',
@@ -23,12 +23,12 @@ const useStyles = makeStyles({
   media: {
     height: 350,
   },
-  characterInfo: {
+  mangaInfo: {
     display: 'flex',
     alignItems: 'top',
     justifyContent: 'space-between'
   },
-  favorite: {
+  rating: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -37,41 +37,41 @@ const useStyles = makeStyles({
   }
 });
 
-export const TopCharacters = () => {
+export const TopManga = () => {
   const classes = useStyles();
 
-  const [topCharacters, setTopCharacters] = useState([]);
+  const [topManga, setTopManga] = useState([]);
 
   useEffect(() => {
-    axios.get('https://api.jikan.moe/v3/top/characters')
+    axios.get('https://api.jikan.moe/v3/top/manga')
       .then(res => {
-        const characters = res.data.top;
+        const manga = res.data.top;
 
-        setTopCharacters(characters);
+        setTopManga(manga);
       })
   }, []);
 
-  console.log(topCharacters);
+  console.log(topManga);
 
-  const top = topCharacters.map(character => {
+  const top = topManga.map(manga => {
     return (
-      <Card className={classes.card} key={character.mal_id}>
-        <a href={character.url} target="_blank" rel="noopener noreferrer">
+      <Card className={classes.card} key={manga.mal_id}>
+        <a href={manga.url} target="_blank" rel="noopener noreferrer">
           <CardActionArea>
             <CardMedia
               className={classes.media}
-              image={character.image_url}
-              title={character.title}
+              image={manga.image_url}
+              title={manga.title}
             />
 
-            <CardContent className={classes.characterInfo}>
+            <CardContent className={classes.mangaInfo}>
               <Typography gutterBottom variant="body2" component="p">
-                &#35;{character.rank} {character.title}
+                &#35;{manga.rank} {manga.title}
               </Typography>
 
               <Typography variant="caption" component="p">
-                <Paper className={classes.favorite} elevation={0}>
-                  <FavoriteIcon style={{ marginRight: 2 }} color="primary" />{character.favorites.toLocaleString()}
+                <Paper className={classes.rating} elevation={0}>
+                  <StarIcon style={{ marginRight: 2 }} color="primary" />{manga.score}
                 </Paper>
               </Typography>
             </CardContent>
@@ -83,10 +83,10 @@ export const TopCharacters = () => {
   });
 
   return (
-    <div className={classes.characterContainer}>
+    <div className={classes.mangaContainer}>
       {top}
     </div>
   )
 }
 
-export default TopCharacters;
+export default TopManga;

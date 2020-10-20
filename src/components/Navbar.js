@@ -5,13 +5,15 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 
 const useStyles = makeStyles({
   root: {
     flexGrow: 1
   },
   title: {
-    flexGrow: 1
+    flexGrow: 1,
+    paddingLeft: '8%'
   }
 });
 
@@ -20,10 +22,11 @@ export const Navbar = () => {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
-        <Container maxWidth="md">
-          <Toolbar>
-            <Typography className={classes.title} variant="h6" noWrap>
+      <AppBar position="static" color="primary">
+        <Container maxWidth="lg">
+          <Toolbar className={classes.title}>
+            <FavoriteIcon style={{ marginRight: 5 }} />
+            <Typography variant="h6" noWrap>
               Fanime
             </Typography>
           </Toolbar>

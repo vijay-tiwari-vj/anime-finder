@@ -7,6 +7,8 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
+import StarIcon from '@material-ui/icons/Star';
+import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles({
   animeContainer: {
@@ -23,8 +25,15 @@ const useStyles = makeStyles({
   },
   animeInfo: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'top',
     justifyContent: 'space-between'
+  },
+  rating: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 0,
+    fontWeight: 'bold'
   }
 });
 
@@ -56,12 +65,14 @@ export const TopAnime = () => {
             />
 
             <CardContent className={classes.animeInfo}>
-              <Typography gutterBottom variant="body1" component="p">
-                {anime.title}
+              <Typography gutterBottom variant="body2" component="p">
+                &#35;{anime.rank} {anime.title}
               </Typography>
 
-              <Typography variant="body2" component="p">
-                {anime.score}
+              <Typography variant="caption" component="p" >
+                <Paper className={classes.rating} elevation={0}>
+                  <StarIcon style={{ marginRight: 2 }} color="primary" />{anime.score}
+                </Paper>
               </Typography>
             </CardContent>
 
