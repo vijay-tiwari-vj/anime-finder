@@ -9,8 +9,20 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import StarIcon from '@material-ui/icons/Star';
 import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  search: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '5%',
+    paddingTop: '0.5rem',
+    paddingBottom: '2rem'
+  },
   mangaContainer: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -37,23 +49,62 @@ const useStyles = makeStyles({
   }
 });
 
+const BASE_API = 'https://api.jikan.moe/v3';
+
 export const TopManga = () => {
   const classes = useStyles();
 
+  const [searchText, setSearchText] = useState('');
   const [topManga, setTopManga] = useState([]);
 
   useEffect(() => {
-    axios.get('https://api.jikan.moe/v3/top/manga')
+    axios.get(`${BASE_API}/top/manga`)
       .then(res => {
         const manga = res.data.top;
 
         setTopManga(manga);
       })
+      .catch(err => {
+        console.log(err)
+      })
   }, []);
 
   console.log(topManga);
 
-  const top = topManga.map(manga => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (searchText.length >= 3) {
+      axios.get(`${BASE_API}/search/manga?q=${searchText}`)
+        .then(res => {
+          const results = res.data.results;
+
+          setTopManga(results);
+          console.log(results);
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+      setSearchText('');
+    }
+  }
+
+  const searchField = () => {
+    return (
+      <TextField
+        id="searchManga"
+        type="search"
+        label="Search Manga"
+        variant="outlined"
+        onChange={(e) => setSearchText(e.target.value)}
+        value={searchText}
+        fullWidth
+      />
+    )
+  }
+
+  const manga = topManga.map(manga => {
     return (
       <Card className={classes.card} key={manga.mal_id}>
         <a href={manga.url} target="_blank" rel="noopener noreferrer">
@@ -66,7 +117,7 @@ export const TopManga = () => {
 
             <CardContent className={classes.mangaInfo}>
               <Typography gutterBottom variant="body2" component="p">
-                &#35;{manga.rank} {manga.title}
+                {manga.rank ? `#${manga.rank} ${manga.title}` : manga.title}
               </Typography>
 
               <Typography variant="caption" component="p">
@@ -83,8 +134,14 @@ export const TopManga = () => {
   });
 
   return (
-    <div className={classes.mangaContainer}>
-      {top}
+    <div className={classes.container}>
+      <form className={classes.search} noValidate autoComplete="off" onSubmit={handleSubmit}>
+        {searchField()}
+      </form>
+
+      <div className={classes.mangaContainer}>
+        {manga}
+      </div>
     </div>
   )
 }

@@ -9,8 +9,20 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  search: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '5%',
+    paddingTop: '0.5rem',
+    paddingBottom: '2rem'
+  },
   characterContainer: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -37,23 +49,62 @@ const useStyles = makeStyles({
   }
 });
 
+const BASE_API = 'https://api.jikan.moe/v3';
+
 export const TopCharacters = () => {
   const classes = useStyles();
 
+  const [searchText, setSearchText] = useState('');
   const [topCharacters, setTopCharacters] = useState([]);
 
   useEffect(() => {
-    axios.get('https://api.jikan.moe/v3/top/characters')
+    axios.get(`${BASE_API}/top/characters`)
       .then(res => {
         const characters = res.data.top;
 
         setTopCharacters(characters);
       })
+      .catch(err => {
+        console.log(err)
+      })
   }, []);
 
   console.log(topCharacters);
 
-  const top = topCharacters.map(character => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (searchText.length >= 3) {
+      axios.get(`${BASE_API}/search/character?q=${searchText}`)
+        .then(res => {
+          const results = res.data.results;
+
+          setTopCharacters(results);
+          console.log(results);
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+      setSearchText('');
+    }
+  }
+
+  const searchField = () => {
+    return (
+      <TextField
+        id="searchCharacter"
+        type="search"
+        label="Search Character"
+        variant="outlined"
+        onChange={(e) => setSearchText(e.target.value)}
+        value={searchText}
+        fullWidth
+      />
+    )
+  }
+
+  const character = topCharacters.map(character => {
     return (
       <Card className={classes.card} key={character.mal_id}>
         <a href={character.url} target="_blank" rel="noopener noreferrer">
@@ -61,17 +112,21 @@ export const TopCharacters = () => {
             <CardMedia
               className={classes.media}
               image={character.image_url}
-              title={character.title}
+              title={character.rank ? character.title : character.name}
             />
 
             <CardContent className={classes.characterInfo}>
               <Typography gutterBottom variant="body2" component="p">
-                &#35;{character.rank} {character.title}
+                {character.rank ? `#${character.rank} ${character.title}` : character.name}
               </Typography>
 
               <Typography variant="caption" component="p">
                 <Paper className={classes.favorite} elevation={0}>
-                  <FavoriteIcon style={{ marginRight: 2 }} color="primary" />{character.favorites.toLocaleString()}
+                  <FavoriteIcon
+                    style={{ marginRight: 2 }}
+                    color="primary"
+                  />
+                  {character.favorites && character.favorites.toLocaleString()}
                 </Paper>
               </Typography>
             </CardContent>
@@ -83,8 +138,14 @@ export const TopCharacters = () => {
   });
 
   return (
-    <div className={classes.characterContainer}>
-      {top}
+    <div className={classes.container}>
+      <form className={classes.search} noValidate autoComplete="off" onSubmit={handleSubmit}>
+        {searchField()}
+      </form>
+
+      <div className={classes.characterContainer}>
+        {character}
+      </div>
     </div>
   )
 }

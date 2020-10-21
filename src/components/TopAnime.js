@@ -9,8 +9,20 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import StarIcon from '@material-ui/icons/Star';
 import Paper from '@material-ui/core/Paper';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles({
+  container: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  search: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '5%',
+    paddingTop: '0.5rem',
+    paddingBottom: '2rem'
+  },
   animeContainer: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -37,23 +49,62 @@ const useStyles = makeStyles({
   }
 });
 
+const BASE_API = 'https://api.jikan.moe/v3';
+
 export const TopAnime = () => {
   const classes = useStyles();
 
+  const [searchText, setSearchText] = useState('');
   const [topAnime, setTopAnime] = useState([]);
 
   useEffect(() => {
-    axios.get('https://api.jikan.moe/v3/top/anime')
+    axios.get(`${BASE_API}/top/anime`)
       .then(res => {
         const anime = res.data.top;
 
         setTopAnime(anime);
       })
+      .catch(err => {
+        console.log(err)
+      })
   }, []);
 
   console.log(topAnime);
 
-  const top = topAnime.map(anime => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (searchText.length >= 3) {
+      axios.get(`${BASE_API}/search/anime?q=${searchText}`)
+        .then(res => {
+          const results = res.data.results;
+
+          setTopAnime(results);
+          console.log(results);
+        })
+        .catch(err => {
+          console.log(err)
+        })
+
+      setSearchText('');
+    }
+  }
+
+  const searchField = () => {
+    return (
+      <TextField
+        id="searchAnime"
+        type="search"
+        label="Search Anime"
+        variant="outlined"
+        onChange={(e) => setSearchText(e.target.value)}
+        value={searchText}
+        fullWidth
+      />
+    )
+  }
+
+  const anime = topAnime.map(anime => {
     return (
       <Card className={classes.card} key={anime.mal_id}>
         <a href={anime.url} target="_blank" rel="noopener noreferrer">
@@ -66,7 +117,7 @@ export const TopAnime = () => {
 
             <CardContent className={classes.animeInfo}>
               <Typography gutterBottom variant="body2" component="p">
-                &#35;{anime.rank} {anime.title}
+                {anime.rank ? `#${anime.rank} ${anime.title}` : anime.title}
               </Typography>
 
               <Typography variant="caption" component="p" >
@@ -83,8 +134,14 @@ export const TopAnime = () => {
   });
 
   return (
-    <div className={classes.animeContainer}>
-      {top}
+    <div className={classes.container}>
+      <form className={classes.search} noValidate autoComplete="off" onSubmit={handleSubmit}>
+        {searchField()}
+      </form>
+
+      <div className={classes.animeContainer}>
+        {anime}
+      </div>
     </div>
   )
 }
