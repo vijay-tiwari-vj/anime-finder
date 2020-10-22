@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import StarIcon from '@material-ui/icons/Star';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
+import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles({
   container: {
@@ -27,6 +28,11 @@ const useStyles = makeStyles({
     display: 'flex',
     flexWrap: 'wrap',
     gap: '10px',
+    justifyContent: 'center',
+    paddingBottom: '2rem'
+  },
+  paginationContainer: {
+    display: 'flex',
     justifyContent: 'center'
   },
   card: {
@@ -56,9 +62,14 @@ export const TopAnime = () => {
 
   const [searchText, setSearchText] = useState('');
   const [topAnime, setTopAnime] = useState([]);
+  const [page, setPage] = useState(1);
+
+  const handlePageChange = (e, value) => {
+    setPage(value);
+  }
 
   useEffect(() => {
-    axios.get(`${BASE_API}/top/anime`)
+    axios.get(`${BASE_API}/top/anime/${page}`)
       .then(res => {
         const anime = res.data.top;
 
@@ -67,9 +78,9 @@ export const TopAnime = () => {
       .catch(err => {
         console.log(err)
       })
-  }, []);
+  }, [page]);
 
-  console.log(topAnime);
+  // console.log(topAnime);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -80,7 +91,7 @@ export const TopAnime = () => {
           const results = res.data.results;
 
           setTopAnime(results);
-          console.log(results);
+          // console.log(results);
         })
         .catch(err => {
           console.log(err)
@@ -116,11 +127,11 @@ export const TopAnime = () => {
             />
 
             <CardContent className={classes.animeInfo}>
-              <Typography gutterBottom variant="body2" component="p">
+              <Typography gutterBottom variant="body2" component="span">
                 {anime.rank ? `#${anime.rank} ${anime.title}` : anime.title}
               </Typography>
 
-              <Typography variant="caption" component="p" >
+              <Typography variant="caption" component="span" >
                 <Paper className={classes.rating} elevation={0}>
                   <StarIcon style={{ marginRight: 2 }} color="primary" />{anime.score}
                 </Paper>
@@ -135,12 +146,26 @@ export const TopAnime = () => {
 
   return (
     <div className={classes.container}>
-      <form className={classes.search} noValidate autoComplete="off" onSubmit={handleSubmit}>
+      <form
+        className={classes.search}
+        noValidate
+        autoComplete="off"
+        onSubmit={handleSubmit}
+      >
         {searchField()}
       </form>
 
       <div className={classes.animeContainer}>
         {anime}
+      </div>
+
+      <div className={classes.paginationContainer}>
+        <Pagination
+          count={50}
+          page={page}
+          onChange={handlePageChange}
+          color="primary"
+        />
       </div>
     </div>
   )

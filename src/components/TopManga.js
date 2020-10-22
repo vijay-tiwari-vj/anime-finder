@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import StarIcon from '@material-ui/icons/Star';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
+import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles({
   container: {
@@ -27,6 +28,11 @@ const useStyles = makeStyles({
     display: 'flex',
     flexWrap: 'wrap',
     gap: '10px',
+    justifyContent: 'center',
+    paddingBottom: '2rem'
+  },
+  paginationContainer: {
+    display: 'flex',
     justifyContent: 'center'
   },
   card: {
@@ -56,9 +62,14 @@ export const TopManga = () => {
 
   const [searchText, setSearchText] = useState('');
   const [topManga, setTopManga] = useState([]);
+  const [page, setPage] = useState(1);
+
+  const handlePageChange = (e, value) => {
+    setPage(value);
+  }
 
   useEffect(() => {
-    axios.get(`${BASE_API}/top/manga`)
+    axios.get(`${BASE_API}/top/manga/${page}`)
       .then(res => {
         const manga = res.data.top;
 
@@ -67,9 +78,9 @@ export const TopManga = () => {
       .catch(err => {
         console.log(err)
       })
-  }, []);
+  }, [page]);
 
-  console.log(topManga);
+  // console.log(topManga);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -80,7 +91,7 @@ export const TopManga = () => {
           const results = res.data.results;
 
           setTopManga(results);
-          console.log(results);
+          // console.log(results);
         })
         .catch(err => {
           console.log(err)
@@ -116,11 +127,11 @@ export const TopManga = () => {
             />
 
             <CardContent className={classes.mangaInfo}>
-              <Typography gutterBottom variant="body2" component="p">
+              <Typography gutterBottom variant="body2" component="span">
                 {manga.rank ? `#${manga.rank} ${manga.title}` : manga.title}
               </Typography>
 
-              <Typography variant="caption" component="p">
+              <Typography variant="caption" component="span">
                 <Paper className={classes.rating} elevation={0}>
                   <StarIcon style={{ marginRight: 2 }} color="primary" />{manga.score}
                 </Paper>
@@ -135,12 +146,26 @@ export const TopManga = () => {
 
   return (
     <div className={classes.container}>
-      <form className={classes.search} noValidate autoComplete="off" onSubmit={handleSubmit}>
+      <form
+        className={classes.search}
+        noValidate
+        autoComplete="off"
+        onSubmit={handleSubmit}
+      >
         {searchField()}
       </form>
 
       <div className={classes.mangaContainer}>
         {manga}
+      </div>
+
+      <div className={classes.paginationContainer}>
+        <Pagination
+          count={50}
+          page={page}
+          onChange={handlePageChange}
+          color="primary"
+        />
       </div>
     </div>
   )

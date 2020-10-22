@@ -13,6 +13,7 @@ import Navbar from './components/Navbar';
 import TopAnime from './components/TopAnime';
 import TopCharacters from './components/TopCharacters';
 import TopManga from './components/TopManga';
+import Footer from './components/Footer';
 
 const theme = createMuiTheme({
   palette: {
@@ -68,6 +69,10 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
   },
+  footerContainer: {
+    backgroundColor: '#512ca8',
+    color: 'white',
+  }
 }));
 
 
@@ -109,6 +114,9 @@ export const App = () => {
             <TopManga />
           </TabPanel>
         </Container>
+      </div>
+      <div className={classes.footerContainer}>
+        <Footer />
       </div>
     </ThemeProvider>
   );

@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
+import Pagination from '@material-ui/lab/Pagination';
 
 const useStyles = makeStyles({
   container: {
@@ -27,6 +28,11 @@ const useStyles = makeStyles({
     display: 'flex',
     flexWrap: 'wrap',
     gap: '10px',
+    justifyContent: 'center',
+    paddingBottom: '2rem'
+  },
+  paginationContainer: {
+    display: 'flex',
     justifyContent: 'center'
   },
   card: {
@@ -56,9 +62,14 @@ export const TopCharacters = () => {
 
   const [searchText, setSearchText] = useState('');
   const [topCharacters, setTopCharacters] = useState([]);
+  const [page, setPage] = useState(1);
+
+  const handlePageChange = (e, value) => {
+    setPage(value);
+  }
 
   useEffect(() => {
-    axios.get(`${BASE_API}/top/characters`)
+    axios.get(`${BASE_API}/top/characters/${page}`)
       .then(res => {
         const characters = res.data.top;
 
@@ -67,9 +78,9 @@ export const TopCharacters = () => {
       .catch(err => {
         console.log(err)
       })
-  }, []);
+  }, [page]);
 
-  console.log(topCharacters);
+  // console.log(topCharacters);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -80,7 +91,7 @@ export const TopCharacters = () => {
           const results = res.data.results;
 
           setTopCharacters(results);
-          console.log(results);
+          // console.log(results);
         })
         .catch(err => {
           console.log(err)
@@ -116,11 +127,11 @@ export const TopCharacters = () => {
             />
 
             <CardContent className={classes.characterInfo}>
-              <Typography gutterBottom variant="body2" component="p">
+              <Typography gutterBottom variant="body2" component="span">
                 {character.rank ? `#${character.rank} ${character.title}` : character.name}
               </Typography>
 
-              <Typography variant="caption" component="p">
+              <Typography variant="caption" component="span">
                 <Paper className={classes.favorite} elevation={0}>
                   <FavoriteIcon
                     style={{ marginRight: 2 }}
@@ -139,12 +150,26 @@ export const TopCharacters = () => {
 
   return (
     <div className={classes.container}>
-      <form className={classes.search} noValidate autoComplete="off" onSubmit={handleSubmit}>
+      <form
+        className={classes.search}
+        noValidate
+        autoComplete="off"
+        onSubmit={handleSubmit}
+      >
         {searchField()}
       </form>
 
       <div className={classes.characterContainer}>
         {character}
+      </div>
+
+      <div className={classes.paginationContainer}>
+        <Pagination
+          count={50}
+          page={page}
+          onChange={handlePageChange}
+          color="primary"
+        />
       </div>
     </div>
   )

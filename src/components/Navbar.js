@@ -27,7 +27,7 @@ export const Navbar = () => {
           <Toolbar className={classes.title}>
             <FavoriteIcon style={{ marginRight: 5 }} />
             <Typography variant="h6" noWrap>
-              Fanime
+              Anime Finder
             </Typography>
           </Toolbar>
         </Container>
