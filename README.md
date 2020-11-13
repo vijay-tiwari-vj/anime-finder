@@ -6,4 +6,6 @@ Find the next anime you wish to watch or browse through all top anime. Anime Fin
 
 ## Getting Started
 
-`npm i && npm start`
+```
+npm i && npm start
+```
